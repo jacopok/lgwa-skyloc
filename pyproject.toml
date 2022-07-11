@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "skyloc_project"
+version = "0.1.0"
+description = "Estimates about the sky localization capabilities of LGWA and ET, with white dwarfs as well as neutron stars."
+authors = ["jacopok <jacopok@gmail.com>"]
+license = "GNU GPL3"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+numpy = "^1.23.1"
+matplotlib = "^3.5.2"
+astropy = "^5.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
