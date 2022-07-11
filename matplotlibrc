@@ -1,0 +1,7 @@
+font.family: serif
+font.serif: Palatino
+
+text.usetex: True
+text.latex.preamble: \usepackage{amsmath} \usepackage{physics} \usepackage{siunitx}
+
+figure.dpi: 250
