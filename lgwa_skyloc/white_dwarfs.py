@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from astropy import visualization
 from pathlib import Path
 
-FIGS = Path(__file__).parent / 'figs'
+FIGS = Path(__file__).parent.parent / 'figs'
 
 def wd_radius(mass: u.Quantity):
     return 0.012 * u.Rsun * (

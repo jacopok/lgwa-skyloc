@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 from GWFish.modules.waveforms import hphc_amplitudes
 from GWFish.modules import detection
 
-from scipy.interpolate import interp1d
+from functools import cached_property
 
-from white_dwarfs import FIGS
+from scipy.interpolate import interp1d
 
 class SignalInDetector:
     
@@ -14,23 +14,33 @@ class SignalInDetector:
         self.detector = detector
 
         self.detector.frequencyvector = self.frequencyvector
-
     
-    @property    
+    @cached_property    
     def psd(self):
-        return self.detector.components[0].psd_data.T[1]
+        return self.detector.components[0].psd_data.T[1][self.hf_filter]
 
     @property
+    def hf_filter(self):
+        fv = self.detector.components[0].psd_data.T[0]
+        if max(fv) > 2500.:
+            i = np.searchsorted(fv, 2500.)
+            return slice(0, i)
+        return slice(None)
+
+    @cached_property
     def frequencyvector(self):
-        return self.detector.components[0].psd_data.T[0]
+        return self.detector.components[0].psd_data.T[0][self.hf_filter]
 
-    @property
+    @cached_property
     def projection(self):
+        fv = np.concatenate((self.frequencyvector, [10]))
         polarizations, timevector = hphc_amplitudes(
-            'gwfish_TaylorF2', 
+            'mlgw_bns', 
             self.parameters, 
-            self.frequencyvector[:, np.newaxis], plot=None)
+            fv[:, np.newaxis], plot=None)
 
+        polarizations = polarizations[:-1]
+        timevector = timevector[:-1]
         projections_set = detection.projection(
             self.parameters, 
             self.detector, 
@@ -40,22 +50,22 @@ class SignalInDetector:
         
         return np.sqrt(np.sum(abs(projections_set)**2, axis=1))
 
-    @property
+    @cached_property
     def characteristic_strain_signal(self):
         return characteristic_strain_from_fourier_amplitude(
                 self.frequencyvector, self.projection)
 
-    @property
+    @cached_property
     def characteristic_strain_noise(self):
         return characteristic_strain_from_psd(
                 self.frequencyvector, self.psd
             )
 
-    @property
+    @cached_property
     def snr_per_efolding(self):
         return self.characteristic_strain_signal / self.characteristic_strain_noise
 
-    @property
+    @cached_property
     def cumulative_snr(self):
         d_log_f = np.gradient(self.frequencyvector) / self.frequencyvector
 
@@ -77,17 +87,14 @@ class SignalAcrossDetectors:
 
         tc = self.timevector[-1, 0]
         self.time_left = tc - self.timevector[:,0]
-        # print(time_left)
-        # index = next((i for i, t in enumerate(time_left) if t < 0), 0)
-        # self.time_left = time_left[:index]
 
-    @property        
+    @cached_property
     def all_freqs(self):
         return np.sort(
             np.concatenate([sig.frequencyvector for sig in self.signals])
             )[:, np.newaxis]
     
-    @property
+    @cached_property
     def cumulative_snr(self):
         interpolants = [
             interp1d(
@@ -111,35 +118,17 @@ def characteristic_strain_from_psd(frequencies, psd):
 def characteristic_strain_from_fourier_amplitude(frequencies, amplitude):
     return 2 * frequencies * amplitude
 
-def main():
+def plot_snr(parameters):
     cmap = plt.get_cmap('inferno')
     lgwa_color = cmap(.8)
     et_color = cmap(.5)
     lisa_color = cmap(.2)
     signal_color = cmap(0.)
-    
-    # config = 'GWFish/detectors.yaml'
-    
+
     et = detection.Detector('ET', parameters= [None], fisher_parameters= [None])
     lgwa = detection.Detector('LGWA', parameters= [None], fisher_parameters= [None])
     # lisa = detection.Detector('LISA', parameters= [None], fisher_parameters= [None], config=config)
     
-    parameters = {
-        'phase': 0.,
-        'geocent_time': 1577491218., # 1st of January 2030
-        'redshift': .01,
-        'luminosity_distance': 40,
-        'theta_jn': 1.,
-        'mass_1': 1.4,
-        'mass_2': 1.4,
-        'ra': 0.,
-        'dec': 0.,
-        'psi': 0.,
-        'lambda_1': 500., 
-        'lambda_2': 500., 
-        'a_1': 500., 
-        'a_2': 500., 
-    }
     
     signal_across_detectors = SignalAcrossDetectors(parameters, detectors=[
         # lisa, 
@@ -159,15 +148,16 @@ def main():
         axs[0].loglog(
             signal.frequencyvector,
             signal.characteristic_strain_signal,
+            label=f'{signal.detector.name} $h_c$', 
             color=color, 
             ls='-', 
-            lw =.3,
+            lw =.5,
             alpha=.5)
 
         axs[0].loglog(
             signal.frequencyvector, 
             signal.characteristic_strain_noise, 
-            label=signal.detector.name, 
+            label=f'{signal.detector.name} $h_n$', 
             color=color)
     
         axs[1].loglog(
@@ -194,8 +184,6 @@ def main():
         '1 year': 60*60*24*365,
     }
 
-    axs[0].set_ylabel('Characteristic strain')
-    axs[0].legend()
     
     axs[1].loglog(
         signal_across_detectors.all_freqs, 
@@ -219,7 +207,7 @@ def main():
     axs[0].loglog(
         signal_across_detectors.all_freqs[:, 0], 
         signal_polarization,
-        label='GW170817',
+        label='GW170817 $h_+$',
         color=signal_color, 
         ls='--')
 
@@ -240,16 +228,16 @@ def main():
 
         # axs[1].scatter([freq], [snr], color=signal_color, marker='x')
 
+    axs[0].set_ylabel('Characteristic strain')
+    axs[0].legend()
     axs[1].set_xlabel('Frequency [Hz]')
     axs[1].set_ylabel('SNR per decade / cumulative SNR')
-    axs[0].set_xlim(1e-1, 2e3)
+    axs[0].set_xlim(1e-1, 2.5e3)
     axs[0].set_ylim(1e-24, 1e-18)
     axs[1].set_ylim(1, 1e4)
     axs[1].legend()
 
-    axs[0].set_title('A best-case-scenario BNS detection')
-    plt.tight_layout()
-    plt.savefig(FIGS / 'ET_LGWA_BNS.pdf')
-
-if __name__ == '__main__':
-    main()
+    axs[0].set_title(f'Total SNR: {signal_across_detectors.cumulative_snr[-1, 0]:.0f}')
+    # plt.tight_layout()
+    plt.gcf().set_size_inches(12, 6)
+    
