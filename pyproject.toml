@@ -11,10 +11,12 @@ numpy = ">=1.22.0"
 matplotlib = "^3.5.2"
 astropy = "^5.1"
 GWFish = {path = "../GWFish", develop=true}
-mlgw_bns = ">=0.10.2"
+mlgw_bns = ">=0.11.0-alpha.1"
+ipywidgets = "^7.7.1"
 
 [tool.poetry.dev-dependencies]
 scalene = "^1.5.8"
+jupyter = "^1.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
