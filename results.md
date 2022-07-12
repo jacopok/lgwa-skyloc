@@ -1,4 +1,7 @@
 ---
+# compile with:
+# pandoc -f markdown-implicit_figures --citeproc results.md -o results.pdf
+
 title: "LGWA sky localization: BNS and BWD"
 author: Jacopo Tissino
 date: July 2022
@@ -6,9 +9,27 @@ geometry: "left=3.5cm,right=3.5cm,top=3cm,bottom=3cm"
 output: pdf_document
 colorlinks: true
 linkcolor: blue
+link-citations: true
+bibliography: [LGWA.bib]
+abstract: |
+  What are the detection prospects for the Lunar Gravitational Wave Array?
+  What are its sky localization capabilities, specifically regarding 
+  neutron stars and white dwarfs?
+
+
+hyperrefoptions:
+- linktoc=all
+- linkcolor=blue
+
 ---
 
-[//]: # (Compile this with: pandoc -f markdown-implicit_figures results.md -o results.pdf)
+
+# LGWA
+
+The Lunar Gravitational Wave Antenna [@harmsLunarGravitationalwaveAntenna2021] is 
+a proposed Moon-based gravitational wave detector, most sensitive in the deciHertz band.
+
+![BNS SNR evolution](figs/ET_LGWA_BNS.pdf)
 
 ## White dwarfs
 
@@ -46,13 +67,13 @@ Even though this is only a Newtonian expression, we recover the correct scaling 
 black hole mergers: the Schwarzshild radius scales with $r \propto m$, so $f \propto m^{-1}$.
 
 How does this play out for white dwarf binaries? Their radii depend on their masses in a 
-much weaker way, which can be approximated by the fitting formula 
+much weaker way, which can be approximated by [@maselliBinaryWhiteDwarfs2020]:
 $$ r (m) \approx 0.012 R_{\odot} \sqrt{ 
     \left(\frac{m}{1.44M_{\odot}}\right)^{-2/3} -
     \left(\frac{m}{1.44M_{\odot}}\right)^{2/3}
 }
 $$
-which, as expected, diverges for $M \to M _{\text{Chandrasekhar}}$.
+which, as expected, approaches zero for $M \to M _{\text{Chandrasekhar}}$.
 For typical white dwarf masses, $M \sim 0.6M_{\odot}$, the first term is more relevant than the second, 
 so roughly $r \propto m^{-1/3}$.
 
@@ -67,3 +88,4 @@ high-frequency part of this band is not useful to detect them.
 The "best" BWD mergers to look out for are therefore the high-mass ones, which 
 merge at higher frequency.
 
+## Bibliography
