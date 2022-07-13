@@ -1,12 +1,13 @@
 import numpy as np
 import pandas as pd
+from typing import Optional
 
 import GWFish.modules as gw
 
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 
-fisher_parameters = [
+DEFAULT_FISHER_PARAMETERS = [
     'geocent_time',
     'ra', 
     'dec', 
@@ -21,10 +22,22 @@ fisher_parameters = [
     # 'a_1',
     # 'a_2'
 ]
+
 threshold_SNR = np.array([0., 0.1])
 duty_cycle = False  # whether to consider the duty cycle of detectors
 
-def compute_fisher(fmax, params, detectors_ids = ['ET', 'LGWA']):
+def compute_fisher(
+    fmax: float, 
+    params: dict[str, float], 
+    detectors_ids: Optional[list[str]] = None, 
+    fisher_parameters: Optional[list[str]] = None,
+    waveform_model: str = 'gwfish_TaylorF2'
+    ):
+
+    if detectors_ids is None:
+        detectors_ids = ['ET']
+    if fisher_parameters is None:
+        fisher_parameters = DEFAULT_FISHER_PARAMETERS
     
     networks_ids = [list(range(len(detectors_ids)))]
 
@@ -34,9 +47,6 @@ def compute_fisher(fmax, params, detectors_ids = ['ET', 'LGWA']):
     
     network = gw.detection.Network(detectors_ids, detection_SNR=threshold_SNR, parameters=parameters,
                                    fisher_parameters=fisher_parameters, fmax=fmax)
-
-    waveform_model = 'gwfish_TaylorF2'
-    # waveform_model = 'mlgw_bns'
 
     parameter_values = parameters.iloc[0]
 
