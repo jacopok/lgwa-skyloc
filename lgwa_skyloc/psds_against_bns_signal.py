@@ -108,9 +108,9 @@ class SignalAcrossDetectors:
         interpolated_snrs = [
             interp(self.all_freqs) for interp in interpolants
         ]
+
         
         return np.sqrt(np.sum(np.array(interpolated_snrs)**2, axis=0))
-
 
 def characteristic_strain_from_psd(frequencies, psd):
     return np.sqrt(frequencies * psd)
@@ -151,8 +151,8 @@ def plot_snr(parameters):
             label=f'{signal.detector.name} $h_c$', 
             color=color, 
             ls='-', 
-            lw =.5,
-            alpha=.5)
+            lw =.7,
+            alpha=.6)
 
         axs[0].loglog(
             signal.frequencyvector, 
@@ -184,7 +184,6 @@ def plot_snr(parameters):
         '1 year': 60*60*24*365,
     }
 
-    
     axs[1].loglog(
         signal_across_detectors.all_freqs, 
         signal_across_detectors.cumulative_snr, 
