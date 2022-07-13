@@ -88,4 +88,19 @@ high-frequency part of this band is not useful to detect them.
 The "best" BWD mergers to look out for are therefore the high-mass ones, which 
 merge at higher frequency.
 
+## Adding `mlgw_bns` to `GWFish`
+
+Do the SNRs match (with `gwfish_TaylorF2`, or with `lalsim_IMRPhenomD_NRTidal`? Yes! 
+Do the PE errors match? No! 
+
+Reference check: comparing `gwfish_TaylorF2` with `lalsim_IMRPhenomD`, almost 
+everything agrees to within a few%, with the exceptions of the masses going up to 
+0.6 in log-error.
+
+Comparing `mlgw_bns` and `lalsim_IMRPhenomD_NRTidal`: 
+things depending on amplitude are kind of OK; masses, phase, (also psi a bit)
+are way messed up.
+
+Typically, it seems like errors on the masses are _underestimated_ by $e^{1 \div 4}$.
+
 ## Bibliography
