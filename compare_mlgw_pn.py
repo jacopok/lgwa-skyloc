@@ -2,7 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from lgwa_skyloc.skyloc_against_time import compute_fisher, DEFAULT_FISHER_PARAMETERS
 
-RNG = np.random.default_rng()
+RNG = np.random.default_rng(seed=1)
+
+fisher_parameters = DEFAULT_FISHER_PARAMETERS + [
+    'lambda_1',
+    'lambda_2',
+    'a_1',
+    'a_2',
+]
 
 def random_bns_params(rng=RNG):
     
@@ -27,24 +34,42 @@ def random_bns_params(rng=RNG):
 
 if __name__ == '__main__':
 
-    N = 200
+    N = 20
     
-    ratios = np.zeros((N, len(DEFAULT_FISHER_PARAMETERS)+2))
+    w_1 = 'lalsim_IMRPhenomD_NRTidal'
+    w_2 = 'mlgw_bns'
+    
+    import warnings; warnings.filterwarnings("ignore", category=UserWarning)
+    
+    ratios = np.zeros((N, len(fisher_parameters)+2))
     for i in range(N):
         params = random_bns_params()
-        sltf2, petf2, snrtf2 = compute_fisher(1024., params, detectors_ids=['ET'], waveform_model='lalsim_IMRPhenomD_NRTidal')
-        x_tf2 = np.concatenate(([snrtf2], [sltf2], petf2))
-        slmb, pemb, snrmb = compute_fisher(1024., params, detectors_ids=['ET'], waveform_model='mlgw_bns')
-        x_mb = np.concatenate(([snrmb], [slmb], pemb))
+        sl1, pe1, snr1 = compute_fisher(
+            1024., 
+            params, 
+            detectors_ids=['ET'], 
+            waveform_model=w_1, 
+            fisher_parameters=fisher_parameters
+        )
+        x_1 = np.concatenate(([snr1], [sl1], pe1))
+
+        sl2, pe2, snr2 = compute_fisher(
+            1024., 
+            params, 
+            detectors_ids=['ET'], 
+            waveform_model=w_2, 
+            fisher_parameters=fisher_parameters
+        )
+        x_2 = np.concatenate(([snr2], [sl2], pe2))
         
-        ratios[i] = x_tf2 / x_mb
-        print(x_tf2 / x_mb)
+        ratios[i] = x_1 / x_2
+        print(x_1 / x_2)
     
-    names = ['SNR', 'skyloc'] + DEFAULT_FISHER_PARAMETERS
+    names = ['SNR', 'skyloc'] + fisher_parameters
     
     for i, name in enumerate(names):
         plt.hist(np.log(ratios[:, i]), bins=30)
         plt.title(name)
-        plt.xlabel('log (sigma_1 / sigma_2)')
+        plt.xlabel(f'log ({w_1} / {w_2})')
         plt.savefig(f'figs/param_comparison/{name}.png')
         plt.close()
