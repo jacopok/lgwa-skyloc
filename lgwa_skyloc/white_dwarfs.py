@@ -5,19 +5,25 @@ import matplotlib.pyplot as plt
 from astropy import visualization
 from pathlib import Path
 
-FIGS = Path(__file__).parent.parent / 'figs'
+from .plotting import FIGS
+
+NS_RADIUS = (12 * u.km).to(u.Rsun)
+
+def bh_radius(mass: u.Quantity):
+    return (mass * 2 * ac.G / ac.c**2).to(u.Rsun)
 
 def wd_radius(mass: u.Quantity):
-    return 0.012 * u.Rsun * (
+    return np.maximum(
+        0.012 * u.Rsun * np.nan_to_num((
         + (mass / 1.44 / u.Msun)**(-2/3)
         - (mass / 1.44 / u.Msun)**(2/3)
-    )**(1/2)
+    )**(1/2), nan=0.), np.maximum(NS_RADIUS, bh_radius(mass)))
 
 def merger_gw_frequency(mass_1: u.Quantity, mass_2: u.Quantity):
     return 2 * np.sqrt(
         ac.G * (mass_1 + mass_2) / 4 / np.pi**2 
         / ((wd_radius(mass_1) + wd_radius(mass_2)) / 2)**3
-    ).si
+    ).to(u.Hz)
 
 def simulate_bwd(rng, size):
     mass_1 = rng.normal(loc=.6, scale=.1, size=size) * u.Msun
@@ -36,22 +42,15 @@ if __name__ == '__main__':
     plt.ylabel('Probability density')
     plt.xlabel('Merger frequency [Hz]')
     plt.savefig(FIGS / 'bwd_merger_frequencies.pdf')
-    plt.close()
     
-    masses = np.geomspace(0.1, 1.2, num=400) * u.Msun
-    with visualization.quantity_support():
-        plt.plot(masses, merger_gw_frequency(masses, masses))
-    plt.ylabel('Merger frequency [Hz]')
-    plt.xlabel('White dwarf mass [$M_{\odot}$]')
-    plt.savefig(FIGS / 'bwd_merger_frequencies_by_mass.pdf')
     plt.close()
 
-    with visualization.quantity_support():
-        plt.plot(masses, wd_radius(masses))
-    plt.savefig(FIGS / 'wd_radii_by_mass.pdf')
-    plt.close()
+    # with visualization.quantity_support():
+    #     plt.plot(masses, wd_radius(masses))
+    # plt.savefig(FIGS / 'wd_radii_by_mass.pdf')
+    # plt.close()
 
-    with visualization.quantity_support():
-        plt.loglog(masses, (wd_radius(masses) / masses / ac.G * ac.c**2).si )
-    plt.savefig(FIGS / 'wd_compactness_by_mass.pdf')
-    plt.close()
+    # with visualization.quantity_support():
+    #     plt.loglog(masses, (wd_radius(masses) / masses / ac.G * ac.c**2).si )
+    # plt.savefig(FIGS / 'wd_compactness_by_mass.pdf')
+    # plt.close()
