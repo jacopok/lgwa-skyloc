@@ -4,9 +4,6 @@ from typing import Optional
 
 import GWFish.modules as gw
 
-import warnings
-warnings.filterwarnings("ignore", category=UserWarning)
-
 DEFAULT_FISHER_PARAMETERS = [
     'geocent_time',
     'ra', 
