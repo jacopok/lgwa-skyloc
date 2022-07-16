@@ -7,13 +7,16 @@ from functools import cached_property
 
 from scipy.interpolate import interp1d
 
+WAVEFORM_MODEL = 'lalsim_IMRPhenomD'
+
 class SignalInDetector:
     
-    def __init__(self, parameters: dict, detector: detection.Detector):
+    def __init__(self, parameters: dict, detector: detection.Detector, waveform_model: str = WAVEFORM_MODEL):
         self.parameters = parameters
         self.detector = detector
 
         self.detector.frequencyvector = self.frequencyvector
+        self.waveform_model = waveform_model
     
     @cached_property    
     def psd(self):
@@ -35,7 +38,7 @@ class SignalInDetector:
     def projection(self):
         fv = np.concatenate((self.frequencyvector, [10]))
         polarizations, timevector = hphc_amplitudes(
-            'mlgw_bns', 
+            self.waveform_model, 
             self.parameters, 
             fv[:, np.newaxis], plot=None)
 
@@ -74,14 +77,14 @@ class SignalInDetector:
 
 class SignalAcrossDetectors:
     
-    def __init__(self, parameters: dict, detectors: list[detection.Detector]):
+    def __init__(self, parameters: dict, detectors: list[detection.Detector], waveform_model: str = WAVEFORM_MODEL):
         self.parameters = parameters
         self.detectors = detectors
         
-        self.signals = [SignalInDetector(parameters, detector) for detector in self.detectors]
+        self.signals = [SignalInDetector(parameters, detector, waveform_model) for detector in self.detectors]
         
         self.polarizations, self.timevector = hphc_amplitudes(
-            'mlgw_bns', 
+            waveform_model, 
             parameters, 
             self.all_freqs, plot=None)
 
@@ -118,7 +121,11 @@ def characteristic_strain_from_psd(frequencies, psd):
 def characteristic_strain_from_fourier_amplitude(frequencies, amplitude):
     return 2 * frequencies * amplitude
 
-def plot_snr(parameters):
+def plot_snr(
+    parameters: dict[str, float], 
+    signal_name: str,
+    waveform_model: str = WAVEFORM_MODEL,
+    ):
     cmap = plt.get_cmap('inferno')
     lgwa_color = cmap(.8)
     et_color = cmap(.5)
@@ -127,14 +134,13 @@ def plot_snr(parameters):
 
     et = detection.Detector('ET', parameters= [None], fisher_parameters= [None])
     lgwa = detection.Detector('LGWA', parameters= [None], fisher_parameters= [None])
-    # lisa = detection.Detector('LISA', parameters= [None], fisher_parameters= [None], config=config)
-    
+    # lisa = detection.Detector('LISA', parameters= [None], fisher_parameters= [None])
     
     signal_across_detectors = SignalAcrossDetectors(parameters, detectors=[
         # lisa, 
         lgwa, 
         et
-    ])
+    ], waveform_model=waveform_model)
     colors = [
         # lisa_color, 
         lgwa_color, 
@@ -182,6 +188,7 @@ def plot_snr(parameters):
         '1 day': 60*60*24,
         '1 month': 60*60*24*30,
         '1 year': 60*60*24*365,
+        '10 years': 60*60*24*365*10,
     }
 
     axs[1].loglog(
@@ -206,7 +213,7 @@ def plot_snr(parameters):
     axs[0].loglog(
         signal_across_detectors.all_freqs[:, 0], 
         signal_polarization,
-        label='GW170817 $h_+$',
+        label=f'{signal_name} $h_+$',
         color=signal_color, 
         ls='--')
 
@@ -231,7 +238,7 @@ def plot_snr(parameters):
     axs[0].legend()
     axs[1].set_xlabel('Frequency [Hz]')
     axs[1].set_ylabel('SNR per decade / cumulative SNR')
-    axs[0].set_xlim(1e-1, 2.5e3)
+    axs[0].set_xlim(1e-2, 2.5e3)
     axs[0].set_ylim(1e-24, 1e-18)
     axs[1].set_ylim(1, 1e4)
     axs[1].legend()
