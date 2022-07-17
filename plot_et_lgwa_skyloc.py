@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from lgwa_skyloc.skyloc_against_time import compute_fisher
 
-from lgwa_skyloc.plotting import cmap
+from lgwa_skyloc.plotting import CMAP, FIGS
 
 def time(f):
     return (f / 20)**(-8/3) * 180
@@ -49,11 +49,11 @@ if __name__ == '__main__':
         sls_nolgwa.append(sl* (180/np.pi)**2)
         snrs_nolgwa.append(snr)
     
-    plt.loglog(time(all_f) / 3600, sls, color=cmap(.2), ls=':', label='Skyloc [square degrees], ET+LGWA')
-    plt.loglog(time(f_high) / 3600, sls_nolgwa, color=cmap(.8), ls=':', label='Skyloc [square degrees], ET')
+    plt.loglog(time(all_f) / 3600, sls, color=CMAP(.2), ls=':', label='Skyloc [square degrees], ET+LGWA')
+    plt.loglog(time(f_high) / 3600, sls_nolgwa, color=CMAP(.8), ls=':', label='Skyloc [square degrees], ET')
 
-    plt.loglog(time(all_f) / 3600, snrs, color=cmap(.2), label='SNR, ET+LGWA')
-    plt.loglog(time(f_high) / 3600, snrs_nolgwa, color=cmap(.8), label='SNR, ET')
+    plt.loglog(time(all_f) / 3600, snrs, color=CMAP(.2), label='SNR, ET+LGWA')
+    plt.loglog(time(f_high) / 3600, snrs_nolgwa, color=CMAP(.8), label='SNR, ET')
 
     FOVs = {
         # 'THESEUS or SVOM': 0.16,
@@ -67,4 +67,4 @@ if __name__ == '__main__':
     
     plt.legend()
     plt.xlabel('Time to merger [hours]')
-    plt.savefig('skyloc.pdf')
+    plt.savefig(FIGS / 'skyloc.pdf')
