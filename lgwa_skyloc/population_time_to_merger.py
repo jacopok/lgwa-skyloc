@@ -5,7 +5,7 @@ from matplotlib import ticker
 from pathlib import Path
 
 from .white_dwarfs import merger_gw_frequency
-from .plotting import FIGS
+from .plotting import FIGS, CMAP
 
 # this value refers to the eta=1/4, m_tot=2.8 case
 # it is the seglen, in seconds, for a signal starting at 20Hz
@@ -58,11 +58,11 @@ def plot_time_to_merger(p_min: float, file_name: Path):
     for (i, j), time  in np.ndenumerate(t):
         t[i, j] = time_to_merger(2/ p_min / 60, m1_range[i], m2_range[j]) / 3600 / 24 / 365
 
-    plt.contourf(m1_range, m2_range, t, levels=100)
+    plt.contourf(m1_range, m2_range, t, levels=100, cmap=CMAP)
     plt.xlabel(r"Primary mass [$M_{\odot}]$")
     plt.ylabel(r"Secondary mass [$M_{\odot}]$")
-    plt.yscale('log')
-    plt.xscale('log')
+    # plt.yscale('log')
+    # plt.xscale('log')
     plt.title(f'Time to merge for a WD binary with $P = {p_min}' + r'\ \text{min}$')
     plt.colorbar(label='Time to merge [yr]')
     plt.savefig(file_name)
