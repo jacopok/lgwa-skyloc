@@ -65,11 +65,15 @@ An estimate for $x$ is $5 \times 10^{-13}$, which means we'd get $h_n \sim 5 \ti
 
 ## Possible LGWA targets
 
+LGWA will be extremely useful for lunar science, but here we'll focus on the astrophysics.
+
 The decihertz band is the "missing link" between the space- and ground-based interferometer bands
 [@seddaMissingLinkGravitationalwave2020].
 
-There are non-binary detection possibilities, such as stochastic backgrounds [@barishImpactMidbandGravitational2021], 
+There are non-binary detection possibilities, such as stochastic backgrounds [@barishImpactMidbandGravitational2021]
+or continuous waves from pulsars [@harmsLunarGravitationalwaveAntenna2021], 
 but we will focus on binaries.
+
 A decihertz observatory could:
 
 - Give early warning for BNS / BBH which merge in the LVC band (guaranteed!).
@@ -121,6 +125,11 @@ $$ h_c = 2\sqrt{T f_0} h_0
 $$
 
 ### Early warning for CBCs: can we localize them?
+
+"[I]t can be expected that [LGWA] would significantly improve parameter estima-
+tion of some GW signals compared to LISA alone" [@harmsLunarGravitationalwaveAntenna2021].
+I haven't really tested this assumption in the IMBH case (also because the LISA PSD is 
+missing from GWFish...), but I have looked at BNS and BWD.
 
 #### SNR evolution
 
