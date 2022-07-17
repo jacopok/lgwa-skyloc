@@ -8,6 +8,7 @@ from functools import cached_property
 from scipy.interpolate import interp1d
 
 WAVEFORM_MODEL = 'lalsim_IMRPhenomD'
+FREQ_RANGE = (1e-2, 2.5e3)
 
 class SignalInDetector:
     
@@ -222,6 +223,8 @@ def plot_snr(
         i = np.searchsorted(signal_across_detectors.time_left[::-1], time)
         i = len(signal_across_detectors.time_left) - i
         freq = signal_across_detectors.all_freqs[i, 0]
+        if freq < FREQ_RANGE[0]:
+            continue
         strain = signal_polarization[i]
         
         axs[0].scatter([freq], [strain], color=signal_color, marker='+')
@@ -238,7 +241,7 @@ def plot_snr(
     axs[0].legend()
     axs[1].set_xlabel('Frequency [Hz]')
     axs[1].set_ylabel('SNR per decade / cumulative SNR')
-    axs[0].set_xlim(1e-2, 2.5e3)
+    axs[0].set_xlim(*FREQ_RANGE)
     axs[0].set_ylim(1e-24, 1e-18)
     axs[1].set_ylim(1, 1e4)
     axs[1].legend()
