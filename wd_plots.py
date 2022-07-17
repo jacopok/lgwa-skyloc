@@ -6,7 +6,7 @@ from matplotlib import ticker
 from astropy import visualization
 from pathlib import Path
 
-from lgwa_skyloc.plotting import FIGS
+from lgwa_skyloc.plotting import FIGS, CMAP
 from lgwa_skyloc.population_time_to_merger import time_to_merger
 from lgwa_skyloc.white_dwarfs import merger_gw_frequency, wd_radius
 
@@ -32,7 +32,8 @@ def merger_freq_plot(
     F, M = np.meshgrid(freqs, masses.value)
     T = np.maximum(time_to_merger(F, M, M) / 3.154e+7, 1./365./24.)
     plt.contourf(F, M, T,
-                locator=ticker.LogLocator(subs=(1, 2, 5)))
+                locator=ticker.LogLocator(subs=(1, np.sqrt(10))),
+                cmap=CMAP)
     # plt.quiver(F, M, (1/T)**(1/3), np.zeros_like(T))
     # plt.legend()
     def fmt(x, pos):
