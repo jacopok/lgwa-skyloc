@@ -10,7 +10,8 @@ python = ">=3.9,<3.10"
 numpy = ">=1.22.0"
 matplotlib = "^3.5.2"
 astropy = "^5.1"
-GWFish = {path = "../GWFish", develop=true}
+GWFish = {git='https://github.com/janosch314/GWFish', develop=true, branch='lgwa-sky-localization'}
+# GWFish = {path='../GWFish', develop=true}
 mlgw_bns = ">=0.11.0-alpha.1"
 ipywidgets = "^7.7.1"
 

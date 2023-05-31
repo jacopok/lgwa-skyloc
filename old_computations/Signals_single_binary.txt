@@ -1,0 +1,2 @@
+mass_1 mass_2 redshift luminosity_distance theta_jn ra dec psi phase geocent_time lambda_1 lambda_2 a_1 a_2 ET_SNR
+1.400 1.400 0.010 40.000 2.618 3.450 -0.410 1.600 0.000 1187008882.000 400.000 400.000 0.000 0.000 384.348

@@ -29,7 +29,7 @@ if __name__ == '__main__':
     }
     
     f_low = np.geomspace(.5, 1.6, num=200)
-    f_high = np.geomspace(1.6, 10, num=200)
+    f_high = np.geomspace(1.6, 10, num=20)
     
     all_f = np.concatenate([f_high])
         

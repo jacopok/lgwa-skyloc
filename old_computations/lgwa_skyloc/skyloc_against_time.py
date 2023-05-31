@@ -5,15 +5,15 @@ from typing import Optional
 import GWFish.modules as gw
 
 DEFAULT_FISHER_PARAMETERS = [
-    'geocent_time',
+    # 'geocent_time',
     'ra', 
     'dec', 
-    'psi', 
-    'theta_jn', 
-    'luminosity_distance',
-    'mass_1',
-    'mass_2',
-    'phase',
+    # 'psi', 
+    # 'theta_jn', 
+    # 'luminosity_distance',
+    # 'mass_1',
+    # 'mass_2',
+    # 'phase',
     # 'lambda_1',
     # 'lambda_2',
     # 'a_1',

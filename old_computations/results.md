@@ -50,6 +50,10 @@ for that mode.
 $T_n$ is $\sim 1$ for $f \gg f_n$ (the frequency of that mode), 
 it has a peak at $f \sim f_n$, and it goes to zero for $f \ll f_n$.
 
+The frequencies $f_n$ of the various modes start out in the milliHertz band and 
+go up to a few times $10^{-2} \text{Hz}$, after which the high-order modes' impact
+starts to wane.
+
 The effective baseline of the various modes is not well-known, but
 it can be assumed to be on the order of 0.6 times the Moon's radius, $10^6 \text{m}$.
 
@@ -61,7 +65,6 @@ then we can compute a strain ASD like $10^{-6} x / \sqrt{\text{Hz}}$.
 
 This means that the characteristic noise strain will be $h_n = \sqrt{f S_n} = 10^{-6} x \sqrt{f / \text{Hz}}$.
 An estimate for $x$ is $5 \times 10^{-13}$, which means we'd get $h_n \sim 5 \times 10^{-19}$; 
-
 
 ## Possible LGWA targets
 
@@ -126,8 +129,7 @@ $$
 
 ### Early warning for CBCs: can we localize them?
 
-"[I]t can be expected that [LGWA] would significantly improve parameter estima-
-tion of some GW signals compared to LISA alone" [@harmsLunarGravitationalwaveAntenna2021].
+"[I]t can be expected that [LGWA] would significantly improve parameter estimation of some GW signals compared to LISA alone" [@harmsLunarGravitationalwaveAntenna2021].
 I haven't really tested this assumption in the IMBH case (also because the LISA PSD is 
 missing from GWFish...), but I have looked at BNS and BWD.
 
@@ -135,6 +137,7 @@ missing from GWFish...), but I have looked at BNS and BWD.
 
 First, we show the time-evolution of the characteristic strain of a BNS (with GW170817's parameters)
 and a BBH (with GW150914's parameters) as would be seen by LGWA + ET.
+Similarly, we show an IMBH merger of $10^4 M_{\odot}$ BHs, at $z = 1$.
 
 ![BNS SNR evolution](figs/ET_LGWA_BNS_170817.pdf)
 ![BBH SNR evolution](figs/ET_LGWA_BBH_150914.pdf)
@@ -143,8 +146,6 @@ and a BBH (with GW150914's parameters) as would be seen by LGWA + ET.
 Since the BNS is $\sim 10$ times less massive but also $\sim 10$ times closer, the position of the 
 characteristic strains of both signals is quite similar; 
 however, the $t(f)$ map differs significantly between the two. 
-
-Similarly, we show an IMBH merger of $10^4 M_{\odot}$ BHs, at $z = 1$.
 
 #### LGWA sky localization
 
