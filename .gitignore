@@ -131,3 +131,23 @@ dmypy.json
 # Pyre type checker
 .pyre/
 profile.json
+
+lgwa-sky-localization/*.txt
+lgwa-sky-localization/*.npy
+
+documentation/index_files/*
+documentation/.quarto/*
+*.aux
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+poster/img/*
+!arxiv-logo-large-cropped.jpg
+!arxiv-qr.png
+!github-qr.png
+!LGWA_crater_lighter.png
+!logo-gssi-new.png
+!make_qr.py
+!plots/localizations.pdf
+!plots/snr_integrand.pdf
+!plots/sensitivity_curves.pdf
