@@ -166,5 +166,5 @@ def compute_total_snr(frequencyvectors, integrands):
 
 
 if __name__ == "__main__":
-    plot_bns_lgwa_et(FIG_DIR / f"sensivity_curves.pdf")
+    plot_bns_lgwa_et(FIG_DIR / f"sensitivity_curves.pdf")
     plot_bns_lgwa_et_snr_integrand(FIG_DIR / f"snr_integrand.pdf")
