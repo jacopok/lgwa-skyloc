@@ -1,0 +1,13 @@
+---
+title: "Multi-band detection of BNS mergers with the Lunar Gravitational Wave Antenna"
+format:
+  html:
+    embed-resources: true
+---
+
+## Fisher matrix forecasting
+
+Useful link: [an introduction to Fisher matrix forecasting](https://htmlpreview.github.io/?https://github.com/FrancescoIacovelli/XIII_ET_Symposium_Hackathon/blob/main/introduction/fisher-explanation.html), taken from the [ET Symposium hackathon](https://github.com/FrancescoIacovelli/XIII_ET_Symposium_Hackathon).
+
+[ET sensitivity curves](https://apps.et-gw.eu/tds/?content=3&r=18213)
+
