@@ -5,9 +5,23 @@ format:
     embed-resources: true
 ---
 
-## Fisher matrix forecasting
+## Fisher matrix forecasting for a lunar detector
 
-Useful link: [an introduction to Fisher matrix forecasting](https://htmlpreview.github.io/?https://github.com/FrancescoIacovelli/XIII_ET_Symposium_Hackathon/blob/main/introduction/fisher-explanation.html), taken from the [ET Symposium hackathon](https://github.com/FrancescoIacovelli/XIII_ET_Symposium_Hackathon).
+The strain at the detector is in the form 
+$$ h(t) = F_{ij}(t) h_{ij}(t)
+$$
 
-[ET sensitivity curves](https://apps.et-gw.eu/tds/?content=3&r=18213)
+which can be computed in the frequency domain thanks to a Stationary Phase Approximation:
 
+$$ h(f) = (F_+(t(f))h_+(f) F_\times (t(f)) h_\times (f)) \exp \left(
+  - i \vec{r}_{\text{det}} \cdot \vec{k}(f)
+  - i \frac{\pi}{4}
+\right)
+$$
+
+where we need an expression for the time $t$ as a function of frequency $f$. 
+We need the assumption that this is a one-to-one function (which it is not,
+for example, if we account for higher order modes or eccentricity).
+
+For the antenna patterns' variation as a function of time we do not need to care 
+about 
