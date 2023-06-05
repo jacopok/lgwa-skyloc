@@ -2,13 +2,16 @@
 
 If you're here because of the QR code in the poster for [GWsNS](https://indico.in2p3.fr/event/28236/), welcome! 
 
+To read more about LGWA, you can find its website [here](http://lgwa.unicam.it/index.php)
+and the paper [here](https://iopscience.iop.org/article/10.3847/1538-4357/abe5a7).
+
 ## Plots and code availability
 
 - The code to generate the plots in the poster is in this repository, in 
     the folder `lgwa-sky-localization`, and the plots it generates are 
     in the folder `plots`.
 - The computations make use of GWFish ([github](https://github.com/janosch314/GWFish), [documentation](https://gwfish.readthedocs.io/en/latest/), [paper](https://www.sciencedirect.com/science/article/pii/S2213133722000853?via%3Dihub)) for the Fisher matrix calculations.
-- Also, they make use of several utilities from the package [gw-landscape](https://github.com/jacopok/gw-landscape).
+- Also, they make use of several plotting utilities from the package [gw-landscape](https://github.com/jacopok/gw-landscape).
 
 ## Forecasting
 
