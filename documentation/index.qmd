@@ -3,17 +3,37 @@ title: "Multi-band detection of BNS mergers with the Lunar Gravitational Wave An
 format:
   html:
     embed-resources: true
+bibliography: GWsNS.bib
 ---
 
+## Rates
+
+The horizon  (largest possible distance at which an optimally-oriented source can be detected) of LGWA for BNS is about 180Mpc; this corresponds to a "BNS range"
+$R$ (defined as the radius such that, averaging over orientations, the sensitive volume is $V$ where $V = 4 \pi R^3 /3$) of about 80Mpc.
+Therefore, we get $V \approx 0.002 \text{Gpc}^3$.
+
+This value is similar to current-generation detectors, so we do not expect many 
+more BNS events than them. 
+The current estimates for the local rate of BNS mergers are of roughly 100 $\text{Gpc}^{-3} \text{yr}^{-1}$, plus or minus an order of magnitude [@theligoscientificcollaborationPopulationMergingCompact2022] (it's a complex estimate to make because it needs the network sensitive volume, which depends on the NS mass distribution; the overall 90% interval they give is 10 to 1700 $\text{Gpc}^{-3} \text{yr}^{-1}$).
+The median value would correspond to 2 detections over a 10-year detector lifespan (0.2 to 30 within the confidence band).
+
+Due to these low expected statistics, this is not the main thrust of LGWA's science case.
+
 ## Fisher matrix forecasting for a lunar detector
+
+This is a description of how the detector response is modelled within GWFish @dupletsaGwfishSimulationSoftware2023.
 
 The strain at the detector is in the form 
 $$ h(t) = F_{ij}(t) h_{ij}(t)
 $$
 
-which can be computed in the frequency domain thanks to a Stationary Phase Approximation:
+which can be computed in the frequency domain thanks to a Stationary Phase Approximation @iacovelliForecastingDetectionCapabilities2022:
 
-$$ h(f) = (F_+(t(f))h_+(f) F_\times (t(f)) h_\times (f)) \exp \left(
+$$ h(f) = \left(
+  F_+(t(f)) h_+(f) 
+  + F_\times (t(f)) h_\times (f) 
+  \right) 
+  \exp \left(
   - i \vec{r}_{\text{det}} \cdot \vec{k}(f)
   - i \frac{\pi}{4}
 \right)
@@ -23,5 +43,8 @@ where we need an expression for the time $t$ as a function of frequency $f$.
 We need the assumption that this is a one-to-one function (which it is not,
 for example, if we account for higher order modes or eccentricity).
 
-For the antenna patterns' variation as a function of time we do not need to care 
-about 
+The term $\vec{r}_{\text{det}} \cdot \vec{k}(f)$ is crucial for the localization
+capabilities of LGWA: the Moon orbits the Earth as the signal is coming in,
+which leads to modulations in the signals that are different if the direction
+is different. 
+
