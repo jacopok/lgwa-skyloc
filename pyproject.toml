@@ -10,10 +10,11 @@ python = ">=3.9,<3.11"
 numpy = ">=1.22.0"
 matplotlib = "^3.5.2"
 astropy = "^5.1"
-GWFish = {git='https://github.com/janosch314/GWFish', develop=true, branch='lgwa-sky-localization'}
+GWFish = {git='https://github.com/janosch314/GWFish', develop=true, branch='io-refactor'}
 gw_landscape = {git='https://github.com/jacopok/gw-landscape', develop=true}
 # ipywidgets = "^7.7.1"
 lalsuite = "^7.15"
+jplephem = "^2.18"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.3.1"

@@ -151,3 +151,4 @@ poster/img/*
 !plots/localizations.pdf
 !plots/snr_integrand.pdf
 !plots/sensitivity_curves.pdf
+!poster/poster.pdf

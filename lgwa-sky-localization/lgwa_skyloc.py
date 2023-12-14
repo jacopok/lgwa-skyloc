@@ -34,20 +34,22 @@ FISHER_PARAMETERS = [
 ]
 
 FIG_DIR = Path(__file__).parent.parent / "plots"
-
+PSD_PATH = Path().parent / 'data'
 
 def compute_sky_localization(cutoffs):
     population = "BNS"
 
-    detectors = ["ET", "LGWA"]
-    # detectors = ['LGWA']
+    # detectors = ["ET", "LGWA"]
+    detectors = ['LGWA']
+    # detectors = ['LBI-SUS']
 
-    networks = "[[0], [1], [0, 1]]"
-    # networks = '[[0, 1]]'
+    # networks = "[[0], [1], [0, 1]]"
+    networks = '[[0]]'
 
     detectors_ids = detectors
     networks_ids = json.loads(networks)
     duty_cycle = False
+    
 
     waveform_model = "IMRPhenomD_NRTidalv2"
 
@@ -83,6 +85,8 @@ def compute_sky_localization(cutoffs):
             signal = gw.detection.projection(
                 parameter_values, network.detectors[d], wave, t_of_f
             )
+            if any(np.isnan(signal[:, 0])):
+                breakpoint()
 
             SNRs = gw.detection.SNR(network.detectors[d], signal, duty_cycle=duty_cycle)
             print(f"{network.detectors[d].name}: SNR={np.sqrt(np.sum(SNRs ** 2)):.1f}")
@@ -104,6 +108,48 @@ def compute_sky_localization(cutoffs):
     return gw.fishermatrix.analyzeFisherErrors(
         network, parameters, fisher_parameters, population, networks_ids
     )
+
+def vary_mass(ns):
+    
+    rng = np.random.default_rng()
+    
+    mass = np.geomspace(1., 100., num=ns)
+    distance = 30 * mass
+    
+    parameters = pd.DataFrame.from_dict(
+        BNS_PARAMS | {
+            "mass_1": mass,
+            "mass_2": mass,
+            "luminosity_distance": distance,
+            # "redshift": 0.00980 * np.ones((ns,)),
+            # "theta_jn": np.arccos(rng.uniform(-1.0, 1.0, size=(ns,))),
+            # "dec": np.arccos(rng.uniform(-1.0, 1.0, size=(ns,))) - np.pi / 2.0,
+            # "ra": rng.uniform(0, 2.0 * np.pi, size=(ns,)),
+            # "psi": rng.uniform(0, 2.0 * np.pi, size=(ns,)),
+            # "phase": rng.uniform(0, 2.0 * np.pi, size=(ns,)),
+            # "geocent_time": rng.uniform(1735257618, 1766793618, size=(ns,)),
+            # "a_1": 0.005136138323169717 * np.ones((ns,)),
+            # "a_2": 0.003235146993487445 * np.ones((ns,)),
+            # "lambda_1": 368.17802383555687 * np.ones((ns,)),
+            # "lambda_2": 586.5487031450857 * np.ones((ns,)),
+        }
+    )
+    
+    population = 'mass_varied'
+    return compute_fisher_multiple_params(parameters, population)
+
+def vary_distance():
+        
+    distance = np.geomspace(40, 120, num=10)
+    
+    parameters = pd.DataFrame.from_dict(
+        BNS_PARAMS | {
+            "luminosity_distance": distance,
+        }
+    )
+    
+    population = 'varied_distance'
+    return compute_fisher_multiple_params(parameters, population)
 
 
 def randomize_sky_location(ns):
@@ -129,6 +175,9 @@ def randomize_sky_location(ns):
     )
 
     population = "BNS_randomized"
+    return compute_fisher_multiple_params(parameters, population)
+
+def compute_fisher_multiple_params(parameters, population):
 
     detectors = ["ET", "LGWA"]
     # detectors = ['LGWA']
@@ -194,7 +243,7 @@ def randomize_sky_location(ns):
 
 def skyloc_in_time_plot(fig_path, recompute=True):
     # cutoffs = [1.]
-    cutoffs = np.geomspace(0.2, 30.0, num=150)
+    cutoffs = np.geomspace(0.1, 30.0, num=40)
 
     if recompute:
         compute_sky_localization(cutoffs)
@@ -242,14 +291,59 @@ def randomized_skyloc_plot(fig_path):
     plt.hist(np.log(err_lgwa * NINETY_PERCENT_INTERVAL), alpha=0.5, bins=30, label='LGWA')
     plt.hist(np.log(err_et * NINETY_PERCENT_INTERVAL), alpha=0.5, bins=30, label='ET')
     plt.hist(np.log(err_combined * NINETY_PERCENT_INTERVAL), alpha=0.5, bins=30, label='ET+LGWA')
-    plt.gca().xaxis.set_major_formatter(lambda x, pos: f"${np.exp(x):.1f}$")
+    plt.gca().xaxis.set_major_formatter(lambda x, pos: f"${np.exp(x)*3600:.1f}$")
 
-    plt.xlabel('90% sky area [square degrees]')
+    plt.xlabel('90% sky area [square arcminutes]')
     plt.ylabel('Number of events')
     plt.legend()
     plt.savefig(fig_path)
 
+def varied_mass_plot(fig_path):
+    ns = 20
+    # vary_mass(ns)
+    err_et = pd.to_numeric(pd.read_csv("Errors_ET_mass_varied_SNR8.0.txt", sep=" ").replace('NAN', np.nan)["err_sky_location"])
+    mass_et = pd.read_csv("Errors_ET_mass_varied_SNR8.0.txt", sep=" ").replace('NAN', np.nan)["mass_1"]
+    err_lgwa = pd.read_csv("Errors_LGWA_mass_varied_SNR8.0.txt", sep=" ")["err_sky_location"]
+    mass_lgwa = pd.read_csv("Errors_LGWA_mass_varied_SNR8.0.txt", sep=" ")["mass_1"]
+    # err_combined = np.array(pd.read_csv("Errors_ET_LGWA_mass_varied_SNR8.0.txt", sep=" ")[
+    #     "err_sky_location"
+    # ])
+    # mass_combined = np.array(pd.read_csv("Errors_ET_LGWA_mass_varied_SNR8.0.txt", sep=" ")["mass_1"])
+    
+    # breakpoint()
+    
+    plt.loglog(mass_et, err_et*NINETY_PERCENT_INTERVAL, label='ET')
+    plt.loglog(mass_lgwa, err_lgwa*NINETY_PERCENT_INTERVAL, label='LGWA')
+    # plt.loglog(mass_combined, err_combined*NINETY_PERCENT_INTERVAL, label='ET+LGWA')
 
+    plt.xlabel('Mass [$M_\odot$]')
+    plt.ylabel('90% sky area [square degrees]')
+    plt.legend()
+    plt.savefig(fig_path)
+
+def varied_distance_plot(fig_path):
+    vary_distance()
+    err_et = pd.to_numeric(pd.read_csv("Errors_ET_varied_distance_SNR8.0.txt", sep=" ").replace('NAN', np.nan)["err_sky_location"])
+    dist = pd.read_csv("Errors_ET_varied_distance_SNR8.0.txt", sep=" ").replace('NAN', np.nan)["luminosity_distance"]
+    err_lgwa = pd.read_csv("Errors_LGWA_varied_distance_SNR8.0.txt", sep=" ")["err_sky_location"]
+    err_combined = np.array(pd.read_csv("Errors_ET_LGWA_varied_distance_SNR8.0.txt", sep=" ")[
+        "err_sky_location"
+    ])
+    
+    # breakpoint()
+    
+    plt.loglog(dist, err_et*NINETY_PERCENT_INTERVAL, label='ET')
+    plt.loglog(dist, err_lgwa*NINETY_PERCENT_INTERVAL, label='LGWA')
+    plt.loglog(dist, err_combined*NINETY_PERCENT_INTERVAL, label='ET+LGWA')
+
+    plt.xlabel('Distance [Mpc]')
+    plt.ylabel('90% sky area [square degrees]')
+    plt.legend()
+    plt.savefig(fig_path)
+    
 if __name__ == "__main__":
-    skyloc_in_time_plot(FIG_DIR / "localizations.pdf", recompute=True)
+    # skyloc_in_time_plot(FIG_DIR / "localizations.pdf", recompute=True)
     # randomized_skyloc_plot(FIG_DIR / "localizations_histogram.png")
+    # varied_distance_plot(FIG_DIR / "varied_distance.png")
+    # varied_mass_plot(FIG_DIR / "varied_mass.png")
+    print(compute_sky_localization([10.]))
