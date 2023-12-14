@@ -1,18 +1,27 @@
+"""This script generates figure "Figures/lgwa_gwtc3.pdf"
+in the LGWA whitepaper.
+
+It computes the SNR for (the median parameter estimates of) 
+all the sources in GWTC-3 and makes a histogram.
+"""
+
 import pandas as pd
 from GWFish.modules.detection import Network 
 from GWFish.modules.fishermatrix import compute_network_errors
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
+import GWFish
 
-BASE_PATH = Path(__file__).parent
+from settings import FIG_PATH
+
+BASE_PATH = Path(GWFish.__file__).parent.parent
 
 params = pd.read_hdf(BASE_PATH / 'injections/GWTC3_cosmo_median.hdf5')
 
 z = params.pop('redshift')
 params['mass_1'] *= (1+z)
 params['mass_2'] *= (1+z)
-print(params)
 
 # params = params.append([params]*999)
 # plt.scatter(params['ra'], np.cos(np.pi/2 - params['dec']))
@@ -48,6 +57,6 @@ plt.hist(detected_snrs, bins=bins, alpha=.5, color='tab:blue')
 plt.xlabel('LGWA SNR')
 plt.ylabel('Number of sources')
 # plt.title(f'GWTC-3 detected sources = {len(detected_snrs)}/{len(network_snr)} $\\approx$ {len(detected_snrs) /len(network_snr):.0%}%')
-plt.savefig('lgwa_gwtc3.pdf', dpi=100)
+plt.savefig(FIG_PATH / 'lgwa_gwtc3.pdf', dpi=100)
 # plt.show()
 
